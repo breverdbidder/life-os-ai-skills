@@ -1,46 +1,44 @@
-# 🧠 Life OS AI Skills System
+# 🧠 Life OS AI Skills Development System
 
-**ADHD-Optimized Productivity Intelligence**
+**Pattern Recognition & Skill Generation for Life OS**
 
-Autonomous AI-powered system that learns from your Life OS tasks and generates reusable skills for productivity, health, swimming, family, and business management.
-
-## 🌐 Dashboard
-
-**Live Dashboard:** https://life-os-skills-dashboard.vercel.app
-
-## 📊 Domains
-
-- **ARIEL** - Personal productivity, ADHD management, health
-- **MICHAEL** - D1 Swimming, nutrition, recruiting
-- **FAMILY** - Shabbat, events, calendar
-- **BUSINESS** - Everest Capital, BrevardBidderAI, insurance
-
-## 🔄 How It Works
-
-```
-Life OS Tasks → Auto-Documentation → Pattern Analysis → Skill Generation
-                                              ↓
-                                    Dashboard displays metrics
-```
-
-## 📈 Categories
-
-- `productivity` - Focus, time management, task completion
-- `health` - Sleep, energy, nutrition tracking
-- `swimming` - Training, times, technique analysis
-- `family` - Event planning, Shabbat prep, coordination
-- `business` - Deal tracking, auctions, automation
-- `automation` - Workflows, scripts, integrations
-
-## 🚀 Features
-
-- Real-time metrics dashboard
-- ADHD effectiveness scoring
-- Domain-based skill organization
-- Auto-documentation protocol
-- Pattern analysis pipeline
-- GitHub Actions automation
+Created by: **Ariel Shapira, Solo Founder - Everest Capital USA**
 
 ---
 
-Created by **Ariel Shapira** | Everest Capital USA
+## 🎯 Purpose
+
+This system tracks Claude's work patterns within Life OS to automatically generate reusable AI skills. It's the AI development layer for Life OS - NOT the main dashboard.
+
+**For the main Life OS Dashboard, visit: https://life-os.vercel.app**
+
+---
+
+## 📊 How It Works
+
+1. **Task Documentation** - Claude documents tasks in Supabase
+2. **Pattern Analysis** - System detects recurring patterns
+3. **Skill Generation** - Creates reusable skills from patterns
+4. **ADHD Optimization** - Measures effectiveness for ADHD management
+
+---
+
+## 🏷️ Domains
+
+| Domain | Focus |
+|--------|-------|
+| **ARIEL** | Productivity, focus, health |
+| **MICHAEL** | Swimming, nutrition, recruiting |
+| **FAMILY** | Shabbat, events, coordination |
+| **BUSINESS** | Everest Capital operations |
+
+---
+
+## 🔗 Links
+
+- **Skills Dashboard**: https://life-os-skills-dashboard.vercel.app
+- **Main Life OS**: https://life-os.vercel.app
+
+---
+
+*Part of the Life OS Ecosystem*
