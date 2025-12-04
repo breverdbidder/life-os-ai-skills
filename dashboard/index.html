@@ -3,23 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS Skills Dashboard</title>
+    <title>Life OS AI Skills Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --life-purple: #8b5cf6; --life-blue: #3b82f6; --life-green: #10b981; --life-orange: #f59e0b; }
-        body { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f172a 100%); min-height: 100vh; }
-        .glass { background: rgba(30, 30, 50, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(139, 92, 246, 0.2); }
-        .glow { box-shadow: 0 0 25px rgba(139, 92, 246, 0.3); }
-        .glow-green { box-shadow: 0 0 25px rgba(16, 185, 129, 0.3); }
-        .life-text { background: linear-gradient(90deg, var(--life-purple), var(--life-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .domain-ariel { border-left: 3px solid var(--life-purple); }
-        .domain-michael { border-left: 3px solid var(--life-blue); }
-        .domain-family { border-left: 3px solid var(--life-green); }
-        .domain-business { border-left: 3px solid var(--life-orange); }
+        :root { 
+            --life-purple: #8b5cf6; 
+            --life-blue: #3b82f6; 
+            --life-green: #10b981;
+            --life-orange: #f59e0b;
+        }
+        body { 
+            background: linear-gradient(135deg, #0f0f1a 0%, #1e1b4b 50%, #0f0f1a 100%); 
+            min-height: 100vh; 
+        }
+        .glass { 
+            background: rgba(30, 27, 75, 0.6); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(139, 92, 246, 0.2); 
+        }
+        .glow { box-shadow: 0 0 25px rgba(139, 92, 246, 0.4); }
+        .life-text { 
+            background: linear-gradient(90deg, var(--life-purple), var(--life-blue), var(--life-green)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        .domain-business { border-left: 4px solid var(--life-blue); }
+        .domain-michael { border-left: 4px solid var(--life-green); }
+        .domain-family { border-left: 4px solid var(--life-orange); }
+        .domain-personal { border-left: 4px solid var(--life-purple); }
         .pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .category-tag { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; }
     </style>
 </head>
 <body class="text-gray-100">
@@ -27,11 +41,14 @@
         <!-- Header -->
         <div class="glass rounded-2xl p-6 mb-8 glow">
             <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="text-5xl">🧠</div>
-                    <div>
-                        <h1 class="text-3xl font-bold life-text">Life OS Skills System</h1>
-                        <p class="text-gray-400 mt-1">ADHD-Optimized Productivity Intelligence • v2.0.0</p>
+                <div>
+                    <h1 class="text-3xl font-bold life-text">Life OS AI Skills System</h1>
+                    <p class="text-gray-400 mt-1">ADHD-Optimized Productivity Intelligence • v2.0.0</p>
+                    <div class="flex gap-2 mt-3">
+                        <span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded text-xs border border-blue-700">BUSINESS</span>
+                        <span class="px-2 py-1 bg-green-900/50 text-green-300 rounded text-xs border border-green-700">MICHAEL</span>
+                        <span class="px-2 py-1 bg-orange-900/50 text-orange-300 rounded text-xs border border-orange-700">FAMILY</span>
+                        <span class="px-2 py-1 bg-purple-900/50 text-purple-300 rounded text-xs border border-purple-700">PERSONAL</span>
                     </div>
                 </div>
                 <div class="text-right">
@@ -42,43 +59,31 @@
             </div>
         </div>
 
-        <!-- Domain Quick Stats -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="glass rounded-xl p-4 domain-ariel hover:glow transition-all">
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="text-2xl">👤</span>
-                    <span class="text-sm text-gray-400 uppercase">Ariel</span>
-                </div>
-                <p id="ariel-skills" class="text-2xl font-bold text-purple-400">-</p>
-                <p class="text-xs text-gray-500">skills</p>
+        <!-- Domain Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="glass rounded-xl p-4 domain-business">
+                <p class="text-blue-400 text-xs uppercase tracking-wide">Business</p>
+                <p id="business-skills" class="text-2xl font-bold text-white mt-1">-</p>
+                <p class="text-gray-500 text-xs">skills</p>
             </div>
-            <div class="glass rounded-xl p-4 domain-michael hover:glow transition-all">
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="text-2xl">🏊</span>
-                    <span class="text-sm text-gray-400 uppercase">Michael</span>
-                </div>
-                <p id="michael-skills" class="text-2xl font-bold text-blue-400">-</p>
-                <p class="text-xs text-gray-500">skills</p>
+            <div class="glass rounded-xl p-4 domain-michael">
+                <p class="text-green-400 text-xs uppercase tracking-wide">Michael D1</p>
+                <p id="michael-skills" class="text-2xl font-bold text-white mt-1">-</p>
+                <p class="text-gray-500 text-xs">skills</p>
             </div>
-            <div class="glass rounded-xl p-4 domain-family hover:glow transition-all">
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="text-2xl">👨‍👩‍👦</span>
-                    <span class="text-sm text-gray-400 uppercase">Family</span>
-                </div>
-                <p id="family-skills" class="text-2xl font-bold text-green-400">-</p>
-                <p class="text-xs text-gray-500">skills</p>
+            <div class="glass rounded-xl p-4 domain-family">
+                <p class="text-orange-400 text-xs uppercase tracking-wide">Family</p>
+                <p id="family-skills" class="text-2xl font-bold text-white mt-1">-</p>
+                <p class="text-gray-500 text-xs">skills</p>
             </div>
-            <div class="glass rounded-xl p-4 domain-business hover:glow transition-all">
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="text-2xl">💼</span>
-                    <span class="text-sm text-gray-400 uppercase">Business</span>
-                </div>
-                <p id="business-skills" class="text-2xl font-bold text-orange-400">-</p>
-                <p class="text-xs text-gray-500">skills</p>
+            <div class="glass rounded-xl p-4 domain-personal">
+                <p class="text-purple-400 text-xs uppercase tracking-wide">Personal</p>
+                <p id="personal-skills" class="text-2xl font-bold text-white mt-1">-</p>
+                <p class="text-gray-500 text-xs">skills</p>
             </div>
         </div>
 
-        <!-- Main Stats Grid -->
+        <!-- Main Stats -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div class="glass rounded-xl p-6 hover:glow transition-all">
                 <div class="flex items-center justify-between">
@@ -86,26 +91,26 @@
                         <p class="text-gray-400 text-sm uppercase tracking-wide">Total Skills</p>
                         <p id="total-skills" class="text-4xl font-bold life-text mt-2">-</p>
                     </div>
-                    <div class="text-5xl opacity-50">🎯</div>
+                    <div class="text-5xl opacity-50">🧠</div>
                 </div>
             </div>
             <div class="glass rounded-xl p-6 hover:glow transition-all">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-400 text-sm uppercase tracking-wide">ADHD Effectiveness</p>
-                        <p id="adhd-score" class="text-4xl font-bold text-green-400 mt-2">-</p>
+                        <p class="text-gray-400 text-sm uppercase tracking-wide">Success Rate</p>
+                        <p id="success-rate" class="text-4xl font-bold text-green-400 mt-2">-</p>
                     </div>
-                    <div class="text-5xl opacity-50">🧠</div>
+                    <div class="text-5xl opacity-50">✅</div>
                 </div>
                 <div class="mt-3 h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div id="adhd-bar" class="h-full bg-gradient-to-r from-purple-500 to-green-400 transition-all duration-500" style="width: 0%"></div>
+                    <div id="success-bar" class="h-full bg-gradient-to-r from-purple-500 to-blue-400 transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
             <div class="glass rounded-xl p-6 hover:glow transition-all">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-400 text-sm uppercase tracking-wide">Time Saved</p>
-                        <p id="time-saved" class="text-4xl font-bold text-blue-400 mt-2">-</p>
+                        <p id="time-saved" class="text-4xl font-bold text-purple-400 mt-2">-</p>
                     </div>
                     <div class="text-5xl opacity-50">⏱️</div>
                 </div>
@@ -113,10 +118,33 @@
             <div class="glass rounded-xl p-6 hover:glow transition-all">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-400 text-sm uppercase tracking-wide">Tasks Documented</p>
-                        <p id="total-docs" class="text-4xl font-bold text-orange-400 mt-2">-</p>
+                        <p class="text-gray-400 text-sm uppercase tracking-wide">Tasks Tracked</p>
+                        <p id="total-tasks" class="text-4xl font-bold text-orange-400 mt-2">-</p>
                     </div>
-                    <div class="text-5xl opacity-50">📄</div>
+                    <div class="text-5xl opacity-50">📋</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADHD Metrics -->
+        <div class="glass rounded-xl p-6 mb-8">
+            <h2 class="text-xl font-semibold life-text mb-4">📊 ADHD Performance Metrics</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                    <p class="text-3xl font-bold text-green-400" id="completion-rate">-</p>
+                    <p class="text-gray-400 text-sm mt-1">Completion Rate</p>
+                </div>
+                <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                    <p class="text-3xl font-bold text-yellow-400" id="abandonment-rate">-</p>
+                    <p class="text-gray-400 text-sm mt-1">Abandonment Rate</p>
+                </div>
+                <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                    <p class="text-3xl font-bold text-blue-400" id="avg-focus">-</p>
+                    <p class="text-gray-400 text-sm mt-1">Avg Focus Quality</p>
+                </div>
+                <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                    <p class="text-3xl font-bold text-purple-400" id="streak-days">-</p>
+                    <p class="text-gray-400 text-sm mt-1">Current Streak</p>
                 </div>
             </div>
         </div>
@@ -124,25 +152,29 @@
         <!-- Charts Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <div class="glass rounded-xl p-6">
-                <h2 class="text-xl font-semibold mb-4 life-text">Skills by Category</h2>
-                <div class="h-64"><canvas id="categoryChart"></canvas></div>
+                <h2 class="text-xl font-semibold life-text mb-4">Skills by Domain</h2>
+                <div class="h-64"><canvas id="domainChart"></canvas></div>
             </div>
             <div class="glass rounded-xl p-6">
-                <h2 class="text-xl font-semibold mb-4 life-text">Domain Distribution</h2>
-                <div class="h-64"><canvas id="domainChart"></canvas></div>
+                <h2 class="text-xl font-semibold life-text mb-4">Weekly Activity</h2>
+                <div class="h-64"><canvas id="activityChart"></canvas></div>
             </div>
         </div>
 
         <!-- Skills Table -->
         <div class="glass rounded-xl p-6 mb-8">
             <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
-                <h2 class="text-xl font-semibold life-text">Skills Inventory</h2>
-                <div class="flex gap-2 flex-wrap">
-                    <button onclick="filterDomain('all')" class="px-3 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600 transition-colors" id="filter-all">All</button>
-                    <button onclick="filterDomain('ARIEL')" class="px-3 py-1 text-xs rounded bg-purple-900/50 hover:bg-purple-800/50 transition-colors">Ariel</button>
-                    <button onclick="filterDomain('MICHAEL')" class="px-3 py-1 text-xs rounded bg-blue-900/50 hover:bg-blue-800/50 transition-colors">Michael</button>
-                    <button onclick="filterDomain('FAMILY')" class="px-3 py-1 text-xs rounded bg-green-900/50 hover:bg-green-800/50 transition-colors">Family</button>
-                    <button onclick="filterDomain('BUSINESS')" class="px-3 py-1 text-xs rounded bg-orange-900/50 hover:bg-orange-800/50 transition-colors">Business</button>
+                <h2 class="text-xl font-semibold life-text">Life OS Skills Inventory</h2>
+                <div class="flex gap-2">
+                    <select id="domain-filter" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-purple-400 focus:outline-none">
+                        <option value="">All Domains</option>
+                        <option value="BUSINESS">Business</option>
+                        <option value="MICHAEL">Michael D1</option>
+                        <option value="FAMILY">Family</option>
+                        <option value="PERSONAL">Personal</option>
+                    </select>
+                    <input type="text" id="search" placeholder="Search skills..." 
+                        class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-sm focus:border-purple-400 focus:outline-none">
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -153,7 +185,8 @@
                             <th class="pb-3 font-medium">Domain</th>
                             <th class="pb-3 font-medium">Category</th>
                             <th class="pb-3 font-medium">Uses</th>
-                            <th class="pb-3 font-medium">ADHD Score</th>
+                            <th class="pb-3 font-medium">Success</th>
+                            <th class="pb-3 font-medium">Time Saved</th>
                             <th class="pb-3 font-medium">Status</th>
                         </tr>
                     </thead>
@@ -164,8 +197,8 @@
 
         <!-- Footer -->
         <div class="text-center text-gray-500 text-sm">
-            <p>Created by <span class="text-purple-400">Ariel Shapira</span> | Life OS v2.0</p>
-            <p class="mt-1">ADHD-Optimized Productivity System</p>
+            <p>Created by <span class="text-purple-400">Ariel Shapira</span> • Life OS for ADHD Optimization</p>
+            <p class="mt-1">Life OS v2.0.0 | AI Skills System v2.0.0</p>
         </div>
     </div>
 
@@ -179,25 +212,35 @@
             'Content-Type': 'application/json'
         };
 
-        let categoryChart, domainChart;
-        let allSkillsData = [];
-        let currentFilter = 'all';
+        let domainChart, activityChart;
+        const domainColors = {
+            'BUSINESS': '#3b82f6',
+            'MICHAEL': '#10b981', 
+            'FAMILY': '#f59e0b',
+            'PERSONAL': '#8b5cf6'
+        };
 
         async function fetchData() {
             try {
                 document.getElementById('status').innerHTML = '● Fetching...';
                 document.getElementById('status').className = 'text-xs text-yellow-400 mt-1 pulse';
                 
-                const skillsRes = await fetch(`${SUPABASE_URL}/rest/v1/insights?insight_type=eq.lifeos_ai_skill&status=eq.Active`, { headers });
+                // Fetch Life OS skills from insights
+                const skillsRes = await fetch(`${SUPABASE_URL}/rest/v1/insights?insight_type=eq.life_os_skill&status=eq.Active`, { headers });
                 const skills = await skillsRes.json();
                 
-                const tasksRes = await fetch(`${SUPABASE_URL}/rest/v1/activities?activity_type=eq.lifeos_skill_task&select=id`, { headers });
-                const tasks = await tasksRes.json();
+                // Fetch activities for task count and ADHD metrics
+                const activitiesRes = await fetch(`${SUPABASE_URL}/rest/v1/activities?activity_type=eq.life_os_task&select=id,notes,focus_quality,domain&order=created_at.desc&limit=100`, { headers });
+                const activities = await activitiesRes.json();
                 
-                let totalUses = 0, totalTimeSaved = 0, totalSuccess = 0, totalAdhd = 0;
-                const categoryCount = {};
-                const domainCount = { ARIEL: 0, MICHAEL: 0, FAMILY: 0, BUSINESS: 0 };
-                allSkillsData = [];
+                // Fetch daily metrics for trends
+                const metricsRes = await fetch(`${SUPABASE_URL}/rest/v1/daily_metrics?select=*&order=date.desc&limit=7`, { headers });
+                const dailyMetrics = await metricsRes.json();
+                
+                // Calculate metrics
+                let totalUses = 0, totalTimeSaved = 0, totalSuccess = 0;
+                const domainCount = { BUSINESS: 0, MICHAEL: 0, FAMILY: 0, PERSONAL: 0 };
+                const skillsData = [];
                 
                 skills.forEach(s => {
                     try {
@@ -205,50 +248,60 @@
                         const uses = data.total_uses || s.recurrence_count || 0;
                         const timeSaved = (data.avg_time_saved || 0) * uses;
                         const successRate = s.confidence || 0;
-                        const adhdScore = data.adhd_effectiveness || 0;
+                        const domain = data.domain || 'PERSONAL';
                         const category = data.category || 'productivity';
-                        const domain = data.domain || 'ARIEL';
                         
                         totalUses += uses;
                         totalTimeSaved += timeSaved;
                         totalSuccess += successRate;
-                        totalAdhd += adhdScore;
-                        categoryCount[category] = (categoryCount[category] || 0) + 1;
                         domainCount[domain] = (domainCount[domain] || 0) + 1;
                         
-                        allSkillsData.push({
+                        skillsData.push({
                             name: s.title,
                             domain,
                             category,
                             uses,
                             successRate: (successRate * 100).toFixed(0) + '%',
-                            adhdScore: (adhdScore * 100).toFixed(0) + '%',
-                            adhdValue: adhdScore * 100,
-                            status: adhdScore >= 0.8 ? 'Optimal' : adhdScore >= 0.6 ? 'Good' : 'Improve'
+                            successValue: successRate * 100,
+                            timeSaved: timeSaved.toFixed(0) + 'm',
+                            timeSavedValue: timeSaved,
+                            status: successRate >= 0.8 ? 'Optimal' : successRate >= 0.6 ? 'Review' : 'Needs Work'
                         });
                     } catch(e) {}
                 });
                 
-                const avgAdhd = skills.length > 0 ? (totalAdhd / skills.length) : 0;
+                const avgSuccess = skills.length > 0 ? (totalSuccess / skills.length) : 0;
+                
+                // Calculate ADHD metrics from activities
+                const avgFocus = activities.length > 0 
+                    ? activities.reduce((sum, a) => sum + (a.focus_quality || 5), 0) / activities.length 
+                    : 0;
                 
                 // Update UI
                 document.getElementById('total-skills').textContent = skills.length;
-                document.getElementById('adhd-score').textContent = (avgAdhd * 100).toFixed(0) + '%';
-                document.getElementById('adhd-bar').style.width = (avgAdhd * 100) + '%';
+                document.getElementById('success-rate').textContent = (avgSuccess * 100).toFixed(0) + '%';
+                document.getElementById('success-bar').style.width = (avgSuccess * 100) + '%';
                 document.getElementById('time-saved').textContent = (totalTimeSaved / 60).toFixed(1) + 'h';
-                document.getElementById('total-docs').textContent = tasks.length;
+                document.getElementById('total-tasks').textContent = activities.length;
                 document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
                 document.getElementById('status').innerHTML = '● Connected';
                 document.getElementById('status').className = 'text-xs text-green-400 mt-1';
                 
                 // Domain counts
-                document.getElementById('ariel-skills').textContent = domainCount.ARIEL || 0;
-                document.getElementById('michael-skills').textContent = domainCount.MICHAEL || 0;
-                document.getElementById('family-skills').textContent = domainCount.FAMILY || 0;
-                document.getElementById('business-skills').textContent = domainCount.BUSINESS || 0;
+                document.getElementById('business-skills').textContent = domainCount.BUSINESS;
+                document.getElementById('michael-skills').textContent = domainCount.MICHAEL;
+                document.getElementById('family-skills').textContent = domainCount.FAMILY;
+                document.getElementById('personal-skills').textContent = domainCount.PERSONAL;
                 
-                renderTable(allSkillsData);
-                updateCharts(categoryCount, domainCount);
+                // ADHD metrics
+                document.getElementById('completion-rate').textContent = (avgSuccess * 100).toFixed(0) + '%';
+                document.getElementById('abandonment-rate').textContent = ((1 - avgSuccess) * 100).toFixed(0) + '%';
+                document.getElementById('avg-focus').textContent = avgFocus.toFixed(1) + '/10';
+                document.getElementById('streak-days').textContent = dailyMetrics.length > 0 ? dailyMetrics.length : '0';
+                
+                // Update table
+                updateTable(skillsData);
+                updateCharts(domainCount, skillsData, dailyMetrics);
                 
             } catch(e) {
                 console.error('Fetch error:', e);
@@ -257,61 +310,50 @@
             }
         }
 
-        function renderTable(data) {
-            const filtered = currentFilter === 'all' ? data : data.filter(s => s.domain === currentFilter);
+        function updateTable(skillsData) {
+            const domainFilter = document.getElementById('domain-filter').value;
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            
+            const filtered = skillsData.filter(s => {
+                const matchesDomain = !domainFilter || s.domain === domainFilter;
+                const matchesSearch = s.name.toLowerCase().includes(searchTerm) || s.category.toLowerCase().includes(searchTerm);
+                return matchesDomain && matchesSearch;
+            });
+            
             const tbody = document.getElementById('skills-table');
-            
-            const domainColors = {
-                ARIEL: 'text-purple-400',
-                MICHAEL: 'text-blue-400',
-                FAMILY: 'text-green-400',
-                BUSINESS: 'text-orange-400'
-            };
-            
-            const categoryColors = {
-                productivity: 'bg-purple-900/50 text-purple-300',
-                health: 'bg-green-900/50 text-green-300',
-                swimming: 'bg-blue-900/50 text-blue-300',
-                family: 'bg-emerald-900/50 text-emerald-300',
-                business: 'bg-orange-900/50 text-orange-300',
-                automation: 'bg-cyan-900/50 text-cyan-300'
-            };
-            
             tbody.innerHTML = filtered.map(s => `
-                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition-colors" data-domain="${s.domain}">
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
                     <td class="py-3 font-medium">${s.name}</td>
-                    <td class="py-3 ${domainColors[s.domain] || 'text-gray-400'} font-medium">${s.domain}</td>
-                    <td class="py-3"><span class="category-tag ${categoryColors[s.category] || 'bg-gray-700 text-gray-300'}">${s.category}</span></td>
+                    <td class="py-3">
+                        <span class="px-2 py-1 rounded text-xs font-medium" style="background: ${domainColors[s.domain]}20; color: ${domainColors[s.domain]}; border: 1px solid ${domainColors[s.domain]}50">
+                            ${s.domain}
+                        </span>
+                    </td>
+                    <td class="py-3"><span class="px-2 py-1 bg-gray-700 rounded text-xs">${s.category}</span></td>
                     <td class="py-3 font-mono">${s.uses}</td>
-                    <td class="py-3 font-mono ${s.adhdValue >= 80 ? 'text-green-400' : s.adhdValue >= 60 ? 'text-yellow-400' : 'text-red-400'}">${s.adhdScore}</td>
+                    <td class="py-3 font-mono ${s.successValue >= 80 ? 'text-green-400' : s.successValue >= 60 ? 'text-yellow-400' : 'text-red-400'}">${s.successRate}</td>
+                    <td class="py-3 font-mono text-purple-400">${s.timeSaved}</td>
                     <td class="py-3">
                         <span class="px-2 py-1 rounded text-xs font-medium ${
-                            s.status === 'Optimal' ? 'bg-green-900/50 text-green-300' :
-                            s.status === 'Good' ? 'bg-yellow-900/50 text-yellow-300' :
-                            'bg-red-900/50 text-red-300'
+                            s.status === 'Optimal' ? 'bg-green-900/50 text-green-300 border border-green-700' :
+                            s.status === 'Review' ? 'bg-yellow-900/50 text-yellow-300 border border-yellow-700' :
+                            'bg-red-900/50 text-red-300 border border-red-700'
                         }">${s.status}</span>
                     </td>
                 </tr>
-            `).join('') || '<tr><td colspan="6" class="py-8 text-center text-gray-500">No skills yet. Start documenting tasks!</td></tr>';
+            `).join('') || '<tr><td colspan="7" class="py-8 text-center text-gray-500">No skills found. Start tracking tasks!</td></tr>';
         }
 
-        function filterDomain(domain) {
-            currentFilter = domain;
-            renderTable(allSkillsData);
-        }
-
-        function updateCharts(categories, domains) {
-            const catLabels = Object.keys(categories).map(c => c.charAt(0).toUpperCase() + c.slice(1));
-            const catData = Object.values(categories);
-            
-            if (categoryChart) categoryChart.destroy();
-            categoryChart = new Chart(document.getElementById('categoryChart'), {
+        function updateCharts(domains, skills, metrics) {
+            // Domain chart
+            if (domainChart) domainChart.destroy();
+            domainChart = new Chart(document.getElementById('domainChart'), {
                 type: 'doughnut',
                 data: {
-                    labels: catLabels,
+                    labels: Object.keys(domains),
                     datasets: [{
-                        data: catData,
-                        backgroundColor: ['#8b5cf6', '#10b981', '#3b82f6', '#f59e0b', '#06b6d4', '#ec4899'],
+                        data: Object.values(domains),
+                        backgroundColor: Object.values(domainColors),
                         borderWidth: 0
                     }]
                 },
@@ -322,30 +364,38 @@
                 }
             });
             
-            if (domainChart) domainChart.destroy();
-            domainChart = new Chart(document.getElementById('domainChart'), {
+            // Activity chart
+            if (activityChart) activityChart.destroy();
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            activityChart = new Chart(document.getElementById('activityChart'), {
                 type: 'bar',
                 data: {
-                    labels: ['Ariel', 'Michael', 'Family', 'Business'],
+                    labels: days,
                     datasets: [{
-                        label: 'Skills',
-                        data: [domains.ARIEL || 0, domains.MICHAEL || 0, domains.FAMILY || 0, domains.BUSINESS || 0],
-                        backgroundColor: ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b'],
-                        borderRadius: 8
+                        label: 'Focus Quality',
+                        data: metrics.slice(0, 7).reverse().map(m => m.avg_focus_quality || 5),
+                        backgroundColor: 'rgba(139, 92, 246, 0.7)',
+                        borderColor: '#8b5cf6',
+                        borderWidth: 1
                     }]
                 },
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { labels: { color: '#9ca3af' } } },
                     scales: { 
-                        y: { grid: { color: 'rgba(55, 65, 81, 0.5)' }, ticks: { color: '#9ca3af' }, beginAtZero: true },
-                        x: { grid: { display: false }, ticks: { color: '#9ca3af' } }
+                        y: { grid: { color: 'rgba(55, 65, 81, 0.5)' }, ticks: { color: '#9ca3af' }, max: 10 },
+                        x: { grid: { color: 'rgba(55, 65, 81, 0.5)' }, ticks: { color: '#9ca3af' } }
                     }
                 }
             });
         }
 
+        // Event listeners
+        document.getElementById('search').addEventListener('input', fetchData);
+        document.getElementById('domain-filter').addEventListener('change', fetchData);
+
+        // Initial load and refresh
         fetchData();
         setInterval(fetchData, 30000);
     </script>
