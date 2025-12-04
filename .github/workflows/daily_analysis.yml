@@ -1,0 +1,59 @@
+name: Daily Life OS Analysis
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # 2 AM EST daily
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: pip install requests
+        
+      - name: Check Life OS metrics
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          python << 'EOF'
+          import os
+          import requests
+          import json
+          from datetime import datetime
+          
+          url = os.environ['SUPABASE_URL']
+          key = os.environ['SUPABASE_KEY']
+          headers = {"apikey": key, "Authorization": f"Bearer {key}"}
+          
+          # Count Life OS tasks
+          r = requests.get(f"{url}/rest/v1/activities?activity_type=eq.life_os_task&select=id", headers=headers)
+          tasks = len(r.json()) if r.status_code == 200 else 0
+          
+          # Count Life OS skills
+          r = requests.get(f"{url}/rest/v1/insights?insight_type=eq.life_os_skill&select=id", headers=headers)
+          skills = len(r.json()) if r.status_code == 200 else 0
+          
+          print(f"📊 Life OS Daily Report - {datetime.now().strftime('%Y-%m-%d')}")
+          print(f"   Tasks: {tasks}")
+          print(f"   Skills: {skills}")
+          
+          # Log system event
+          requests.post(f"{url}/rest/v1/activities", headers=headers, json={
+              "activity_type": "system_event",
+              "platform": "life_os_skills",
+              "domain": "PERSONAL",
+              "notes": json.dumps({"event": "daily_analysis", "tasks": tasks, "skills": skills})
+          })
+          EOF
+          
+      - name: Generate analysis prompt if threshold met
+        run: echo "Analysis workflow completed"
