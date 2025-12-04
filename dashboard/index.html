@@ -3,202 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS AI Skills Dashboard</title>
+    <title>Life OS Dashboard - Shapira Family</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { 
-            --life-purple: #8b5cf6; 
-            --life-blue: #3b82f6; 
-            --life-green: #10b981;
-            --life-orange: #f59e0b;
+        :root {
+            --ariel: #8b5cf6;
+            --michael: #3b82f6;
+            --family: #10b981;
+            --business: #f59e0b;
         }
         body { 
-            background: linear-gradient(135deg, #0f0f1a 0%, #1e1b4b 50%, #0f0f1a 100%); 
-            min-height: 100vh; 
+            background: linear-gradient(135deg, #0c0c14 0%, #1a1a2e 50%, #0f172a 100%); 
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
         }
         .glass { 
-            background: rgba(30, 27, 75, 0.6); 
+            background: rgba(20, 20, 35, 0.85); 
             backdrop-filter: blur(12px); 
-            border: 1px solid rgba(139, 92, 246, 0.2); 
+            border: 1px solid rgba(139, 92, 246, 0.15);
         }
-        .glow { box-shadow: 0 0 25px rgba(139, 92, 246, 0.4); }
+        .glass-light { background: rgba(30, 30, 50, 0.6); }
+        .glow { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+        .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        .glow-green { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
         .life-text { 
-            background: linear-gradient(90deg, var(--life-purple), var(--life-blue), var(--life-green)); 
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6, #10b981); 
             -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
+            -webkit-text-fill-color: transparent;
         }
-        .domain-business { border-left: 4px solid var(--life-blue); }
-        .domain-michael { border-left: 4px solid var(--life-green); }
-        .domain-family { border-left: 4px solid var(--life-orange); }
-        .domain-personal { border-left: 4px solid var(--life-purple); }
+        .status-active { background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.5); color: #10b981; }
+        .status-pending { background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); color: #f59e0b; }
+        .status-completed { background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5); color: #3b82f6; }
+        .domain-ariel { border-left: 4px solid var(--ariel); }
+        .domain-michael { border-left: 4px solid var(--michael); }
+        .domain-family { border-left: 4px solid var(--family); }
+        .domain-business { border-left: 4px solid var(--business); }
         .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139, 92, 246, 0.2); }
+        .timeline-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="text-gray-100">
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        
         <!-- Header -->
-        <div class="glass rounded-2xl p-6 mb-8 glow">
+        <div class="glass rounded-2xl p-5 mb-6 glow">
             <div class="flex items-center justify-between flex-wrap gap-4">
-                <div>
-                    <h1 class="text-3xl font-bold life-text">Life OS AI Skills System</h1>
-                    <p class="text-gray-400 mt-1">ADHD-Optimized Productivity Intelligence • v2.0.0</p>
-                    <div class="flex gap-2 mt-3">
-                        <span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded text-xs border border-blue-700">BUSINESS</span>
-                        <span class="px-2 py-1 bg-green-900/50 text-green-300 rounded text-xs border border-green-700">MICHAEL</span>
-                        <span class="px-2 py-1 bg-orange-900/50 text-orange-300 rounded text-xs border border-orange-700">FAMILY</span>
-                        <span class="px-2 py-1 bg-purple-900/50 text-purple-300 rounded text-xs border border-purple-700">PERSONAL</span>
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-2xl">
+                        🧠
                     </div>
-                </div>
-                <div class="text-right">
-                    <div class="text-sm text-gray-500">Last Updated</div>
-                    <div id="last-update" class="text-purple-400 font-mono">Loading...</div>
-                    <div id="status" class="text-xs text-green-400 mt-1">● Connected</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Domain Stats -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="glass rounded-xl p-4 domain-business">
-                <p class="text-blue-400 text-xs uppercase tracking-wide">Business</p>
-                <p id="business-skills" class="text-2xl font-bold text-white mt-1">-</p>
-                <p class="text-gray-500 text-xs">skills</p>
-            </div>
-            <div class="glass rounded-xl p-4 domain-michael">
-                <p class="text-green-400 text-xs uppercase tracking-wide">Michael D1</p>
-                <p id="michael-skills" class="text-2xl font-bold text-white mt-1">-</p>
-                <p class="text-gray-500 text-xs">skills</p>
-            </div>
-            <div class="glass rounded-xl p-4 domain-family">
-                <p class="text-orange-400 text-xs uppercase tracking-wide">Family</p>
-                <p id="family-skills" class="text-2xl font-bold text-white mt-1">-</p>
-                <p class="text-gray-500 text-xs">skills</p>
-            </div>
-            <div class="glass rounded-xl p-4 domain-personal">
-                <p class="text-purple-400 text-xs uppercase tracking-wide">Personal</p>
-                <p id="personal-skills" class="text-2xl font-bold text-white mt-1">-</p>
-                <p class="text-gray-500 text-xs">skills</p>
-            </div>
-        </div>
-
-        <!-- Main Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="glass rounded-xl p-6 hover:glow transition-all">
-                <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-400 text-sm uppercase tracking-wide">Total Skills</p>
-                        <p id="total-skills" class="text-4xl font-bold life-text mt-2">-</p>
+                        <h1 class="text-2xl font-bold life-text">Life OS Dashboard</h1>
+                        <p class="text-gray-400 text-sm">Shapira Family • ADHD-Optimized Tracking</p>
                     </div>
-                    <div class="text-5xl opacity-50">🧠</div>
                 </div>
-            </div>
-            <div class="glass rounded-xl p-6 hover:glow transition-all">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-400 text-sm uppercase tracking-wide">Success Rate</p>
-                        <p id="success-rate" class="text-4xl font-bold text-green-400 mt-2">-</p>
+                <div class="flex items-center gap-6">
+                    <div class="text-right">
+                        <div id="current-date" class="text-lg font-semibold text-white"></div>
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                            <span>🕐 FL:</span>
+                            <span id="time-fl" class="font-mono text-purple-400"></span>
+                            <span class="mx-1">|</span>
+                            <span>IL:</span>
+                            <span id="time-il" class="font-mono text-blue-400"></span>
+                        </div>
                     </div>
-                    <div class="text-5xl opacity-50">✅</div>
-                </div>
-                <div class="mt-3 h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div id="success-bar" class="h-full bg-gradient-to-r from-purple-500 to-blue-400 transition-all duration-500" style="width: 0%"></div>
-                </div>
-            </div>
-            <div class="glass rounded-xl p-6 hover:glow transition-all">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-400 text-sm uppercase tracking-wide">Time Saved</p>
-                        <p id="time-saved" class="text-4xl font-bold text-purple-400 mt-2">-</p>
+                    <div id="status-indicator" class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 border border-green-500/30">
+                        <span class="w-2 h-2 rounded-full bg-green-400 pulse"></span>
+                        <span class="text-xs text-green-400">Live</span>
                     </div>
-                    <div class="text-5xl opacity-50">⏱️</div>
-                </div>
-            </div>
-            <div class="glass rounded-xl p-6 hover:glow transition-all">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-400 text-sm uppercase tracking-wide">Tasks Tracked</p>
-                        <p id="total-tasks" class="text-4xl font-bold text-orange-400 mt-2">-</p>
-                    </div>
-                    <div class="text-5xl opacity-50">📋</div>
                 </div>
             </div>
         </div>
 
-        <!-- ADHD Metrics -->
-        <div class="glass rounded-xl p-6 mb-8">
-            <h2 class="text-xl font-semibold life-text mb-4">📊 ADHD Performance Metrics</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="text-center p-4 bg-gray-800/50 rounded-lg">
-                    <p class="text-3xl font-bold text-green-400" id="completion-rate">-</p>
-                    <p class="text-gray-400 text-sm mt-1">Completion Rate</p>
+        <!-- Current Location / Travel Banner -->
+        <div id="travel-banner" class="glass rounded-xl p-4 mb-6 border-l-4 border-blue-500 glow-blue hidden">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="text-3xl">🚗</div>
+                    <div>
+                        <div class="text-sm text-blue-400 uppercase tracking-wide">Current Travel</div>
+                        <div id="travel-route" class="text-lg font-semibold"></div>
+                    </div>
                 </div>
-                <div class="text-center p-4 bg-gray-800/50 rounded-lg">
-                    <p class="text-3xl font-bold text-yellow-400" id="abandonment-rate">-</p>
-                    <p class="text-gray-400 text-sm mt-1">Abandonment Rate</p>
-                </div>
-                <div class="text-center p-4 bg-gray-800/50 rounded-lg">
-                    <p class="text-3xl font-bold text-blue-400" id="avg-focus">-</p>
-                    <p class="text-gray-400 text-sm mt-1">Avg Focus Quality</p>
-                </div>
-                <div class="text-center p-4 bg-gray-800/50 rounded-lg">
-                    <p class="text-3xl font-bold text-purple-400" id="streak-days">-</p>
-                    <p class="text-gray-400 text-sm mt-1">Current Streak</p>
+                <div class="flex items-center gap-4">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-400" id="travel-distance">--</div>
+                        <div class="text-xs text-gray-400">miles</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-400" id="travel-time">--</div>
+                        <div class="text-xs text-gray-400">drive</div>
+                    </div>
+                    <span id="travel-status" class="status-active px-3 py-1 rounded-full text-xs font-medium"></span>
                 </div>
             </div>
         </div>
 
-        <!-- Charts Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div class="glass rounded-xl p-6">
-                <h2 class="text-xl font-semibold life-text mb-4">Skills by Domain</h2>
-                <div class="h-64"><canvas id="domainChart"></canvas></div>
+        <!-- Quick Stats Row -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="glass rounded-xl p-4 card-hover domain-ariel">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                        <i class="fas fa-user text-purple-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase">Ariel</div>
+                        <div id="ariel-tasks" class="text-xl font-bold text-purple-400">-</div>
+                    </div>
+                </div>
             </div>
-            <div class="glass rounded-xl p-6">
-                <h2 class="text-xl font-semibold life-text mb-4">Weekly Activity</h2>
-                <div class="h-64"><canvas id="activityChart"></canvas></div>
+            <div class="glass rounded-xl p-4 card-hover domain-michael">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <i class="fas fa-swimmer text-blue-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase">Michael</div>
+                        <div id="michael-tasks" class="text-xl font-bold text-blue-400">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass rounded-xl p-4 card-hover domain-family">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                        <i class="fas fa-home text-green-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase">Family</div>
+                        <div id="family-tasks" class="text-xl font-bold text-green-400">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass rounded-xl p-4 card-hover domain-business">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
+                        <i class="fas fa-briefcase text-orange-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase">Business</div>
+                        <div id="business-tasks" class="text-xl font-bold text-orange-400">-</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Skills Table -->
-        <div class="glass rounded-xl p-6 mb-8">
-            <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
-                <h2 class="text-xl font-semibold life-text">Life OS Skills Inventory</h2>
-                <div class="flex gap-2">
-                    <select id="domain-filter" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-purple-400 focus:outline-none">
-                        <option value="">All Domains</option>
-                        <option value="BUSINESS">Business</option>
-                        <option value="MICHAEL">Michael D1</option>
-                        <option value="FAMILY">Family</option>
-                        <option value="PERSONAL">Personal</option>
-                    </select>
-                    <input type="text" id="search" placeholder="Search skills..." 
-                        class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-sm focus:border-purple-400 focus:outline-none">
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            
+            <!-- Left Column - Today's Schedule -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Today's Tasks -->
+                <div class="glass rounded-xl p-5 card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold life-text flex items-center gap-2">
+                            <i class="fas fa-tasks"></i> Today's Schedule
+                        </h2>
+                        <span class="text-xs text-gray-400" id="task-count">0 items</span>
+                    </div>
+                    <div id="tasks-timeline" class="space-y-3 max-h-96 overflow-y-auto scrollbar-hide">
+                        <div class="text-gray-500 text-center py-8">Loading...</div>
+                    </div>
                 </div>
+
+                <!-- Michael's Swim Meet -->
+                <div id="swim-meet-card" class="glass rounded-xl p-5 card-hover domain-michael hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-blue-400 flex items-center gap-2">
+                            <i class="fas fa-swimmer"></i> Michael's Swim Meet
+                        </h2>
+                        <span id="swim-status" class="status-active px-3 py-1 rounded-full text-xs font-medium"></span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-2xl mb-1">📍</div>
+                            <div class="text-xs text-gray-400">Location</div>
+                            <div id="swim-location" class="text-sm font-medium text-white">--</div>
+                        </div>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-2xl mb-1">📅</div>
+                            <div class="text-xs text-gray-400">Date</div>
+                            <div id="swim-date" class="text-sm font-medium text-white">--</div>
+                        </div>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-2xl mb-1">🏊</div>
+                            <div class="text-xs text-gray-400">Events</div>
+                            <div id="swim-events" class="text-sm font-medium text-white">--</div>
+                        </div>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-2xl mb-1">🎯</div>
+                            <div class="text-xs text-gray-400">Goal</div>
+                            <div id="swim-goal" class="text-sm font-medium text-green-400">--</div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="text-left text-gray-400 text-sm border-b border-gray-700">
-                            <th class="pb-3 font-medium">Skill Name</th>
-                            <th class="pb-3 font-medium">Domain</th>
-                            <th class="pb-3 font-medium">Category</th>
-                            <th class="pb-3 font-medium">Uses</th>
-                            <th class="pb-3 font-medium">Success</th>
-                            <th class="pb-3 font-medium">Time Saved</th>
-                            <th class="pb-3 font-medium">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="skills-table"></tbody>
-                </table>
+
+            <!-- Right Column - Info Cards -->
+            <div class="space-y-6">
+                
+                <!-- Hotel Reservation -->
+                <div id="hotel-card" class="glass rounded-xl p-5 card-hover glow-green hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center text-2xl">
+                            🏨
+                        </div>
+                        <div>
+                            <div class="text-xs text-green-400 uppercase">Hotel Reservation</div>
+                            <div id="hotel-name" class="text-lg font-semibold">--</div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Location</span>
+                            <span id="hotel-location" class="text-white">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Check-in</span>
+                            <span id="hotel-checkin" class="text-green-400">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Check-out</span>
+                            <span id="hotel-checkout" class="text-white">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Guests</span>
+                            <span id="hotel-guests" class="text-white">--</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-700">
+                            <span class="text-gray-400">Status</span>
+                            <span id="hotel-status" class="status-active px-2 py-0.5 rounded text-xs">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shabbat Prep -->
+                <div id="shabbat-card" class="glass rounded-xl p-5 card-hover domain-family hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-2xl">
+                            🕯️
+                        </div>
+                        <div>
+                            <div class="text-xs text-amber-400 uppercase">Shabbat Prep</div>
+                            <div id="shabbat-date" class="text-lg font-semibold">--</div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Candle Lighting</span>
+                            <span id="shabbat-candles" class="text-amber-400 font-medium">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Menu Planned</span>
+                            <span id="shabbat-menu" class="text-white">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Shopping Done</span>
+                            <span id="shabbat-shopping" class="text-white">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health & Energy -->
+                <div class="glass rounded-xl p-5 card-hover domain-ariel">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-2xl">
+                            💪
+                        </div>
+                        <div>
+                            <div class="text-xs text-purple-400 uppercase">Ariel's Status</div>
+                            <div class="text-lg font-semibold">Health & Energy</div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-400">Energy Level</span>
+                                <span id="energy-value" class="text-purple-400">--</span>
+                            </div>
+                            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div id="energy-bar" class="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-400">Focus Quality</span>
+                                <span id="focus-value" class="text-blue-400">--</span>
+                            </div>
+                            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div id="focus-bar" class="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-sm pt-2 border-t border-gray-700">
+                            <span class="text-gray-400">Sleep</span>
+                            <span id="sleep-hours" class="text-white">-- hrs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Michael's Nutrition -->
+                <div id="nutrition-card" class="glass rounded-xl p-5 card-hover domain-michael hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-2xl">
+                            🥗
+                        </div>
+                        <div>
+                            <div class="text-xs text-blue-400 uppercase">Michael's Nutrition</div>
+                            <div id="diet-mode" class="text-lg font-semibold">--</div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Hydration Goal</span>
+                            <span id="hydration-goal" class="text-blue-400">--</span>
+                        </div>
+                        <div id="nutrition-meals" class="pt-2 border-t border-gray-700">
+                            <div class="text-gray-400 text-xs mb-2">Meals Planned</div>
+                            <div id="meals-list" class="space-y-1"></div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
         <!-- Footer -->
-        <div class="text-center text-gray-500 text-sm">
-            <p>Created by <span class="text-purple-400">Ariel Shapira</span> • Life OS for ADHD Optimization</p>
-            <p class="mt-1">Life OS v2.0.0 | AI Skills System v2.0.0</p>
+        <div class="text-center text-gray-500 text-sm py-4">
+            <p>Life OS v2.0 • Created by <span class="text-purple-400">Ariel Shapira</span></p>
+            <p class="text-xs mt-1">Home: 390 Roosevelt Ave, Satellite Beach, FL 32937</p>
         </div>
     </div>
 
@@ -212,190 +352,210 @@
             'Content-Type': 'application/json'
         };
 
-        let domainChart, activityChart;
-        const domainColors = {
-            'BUSINESS': '#3b82f6',
-            'MICHAEL': '#10b981', 
-            'FAMILY': '#f59e0b',
-            'PERSONAL': '#8b5cf6'
+        // Update time displays
+        function updateTime() {
+            const now = new Date();
+            const flTime = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit' });
+            const ilTime = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            
+            document.getElementById('time-fl').textContent = flTime;
+            document.getElementById('time-il').textContent = ilTime;
+            document.getElementById('current-date').textContent = dateStr;
+        }
+
+        // Domain icons and colors
+        const domainConfig = {
+            'ARIEL': { icon: 'fa-user', color: 'purple', emoji: '👤' },
+            'MICHAEL': { icon: 'fa-swimmer', color: 'blue', emoji: '🏊' },
+            'FAMILY': { icon: 'fa-home', color: 'green', emoji: '👨‍👩‍👦' },
+            'BUSINESS': { icon: 'fa-briefcase', color: 'orange', emoji: '💼' }
+        };
+
+        const activityIcons = {
+            'travel': '🚗',
+            'hotel': '🏨',
+            'swim_meet': '🏊',
+            'nutrition': '🥗',
+            'health_log': '💪',
+            'shabbat': '🕯️',
+            'business': '💼',
+            'task': '📋'
         };
 
         async function fetchData() {
             try {
-                document.getElementById('status').innerHTML = '● Fetching...';
-                document.getElementById('status').className = 'text-xs text-yellow-400 mt-1 pulse';
+                // Fetch all life_os activities
+                const res = await fetch(
+                    `${SUPABASE_URL}/rest/v1/activities?platform=eq.life_os&order=created_at.desc&limit=50`,
+                    { headers }
+                );
+                const activities = await res.json();
                 
-                // Fetch Life OS skills from insights
-                const skillsRes = await fetch(`${SUPABASE_URL}/rest/v1/insights?insight_type=eq.life_os_skill&status=eq.Active`, { headers });
-                const skills = await skillsRes.json();
-                
-                // Fetch activities for task count and ADHD metrics
-                const activitiesRes = await fetch(`${SUPABASE_URL}/rest/v1/activities?activity_type=eq.life_os_task&select=id,notes,focus_quality,domain&order=created_at.desc&limit=100`, { headers });
-                const activities = await activitiesRes.json();
-                
-                // Fetch daily metrics for trends
-                const metricsRes = await fetch(`${SUPABASE_URL}/rest/v1/daily_metrics?select=*&order=date.desc&limit=7`, { headers });
-                const dailyMetrics = await metricsRes.json();
-                
-                // Calculate metrics
-                let totalUses = 0, totalTimeSaved = 0, totalSuccess = 0;
-                const domainCount = { BUSINESS: 0, MICHAEL: 0, FAMILY: 0, PERSONAL: 0 };
-                const skillsData = [];
-                
-                skills.forEach(s => {
+                // Process data
+                const domainCounts = { ARIEL: 0, MICHAEL: 0, FAMILY: 0, BUSINESS: 0 };
+                const tasks = [];
+                let travelData = null;
+                let hotelData = null;
+                let swimMeetData = null;
+                let nutritionData = null;
+                let healthData = null;
+                let shabbatData = null;
+
+                activities.forEach(a => {
                     try {
-                        const data = JSON.parse(s.action_taken || '{}');
-                        const uses = data.total_uses || s.recurrence_count || 0;
-                        const timeSaved = (data.avg_time_saved || 0) * uses;
-                        const successRate = s.confidence || 0;
-                        const domain = data.domain || 'PERSONAL';
-                        const category = data.category || 'productivity';
+                        const data = JSON.parse(a.notes || '{}');
+                        data._activity_type = a.activity_type;
+                        data._domain = a.domain;
+                        data._created = a.created_at;
                         
-                        totalUses += uses;
-                        totalTimeSaved += timeSaved;
-                        totalSuccess += successRate;
-                        domainCount[domain] = (domainCount[domain] || 0) + 1;
-                        
-                        skillsData.push({
-                            name: s.title,
-                            domain,
-                            category,
-                            uses,
-                            successRate: (successRate * 100).toFixed(0) + '%',
-                            successValue: successRate * 100,
-                            timeSaved: timeSaved.toFixed(0) + 'm',
-                            timeSavedValue: timeSaved,
-                            status: successRate >= 0.8 ? 'Optimal' : successRate >= 0.6 ? 'Review' : 'Needs Work'
-                        });
+                        domainCounts[a.domain] = (domainCounts[a.domain] || 0) + 1;
+
+                        // Categorize by type
+                        switch(a.activity_type) {
+                            case 'travel':
+                                if (!travelData) travelData = data;
+                                break;
+                            case 'hotel':
+                                if (!hotelData) hotelData = data;
+                                break;
+                            case 'swim_meet':
+                                if (!swimMeetData) swimMeetData = data;
+                                break;
+                            case 'nutrition':
+                                if (!nutritionData) nutritionData = data;
+                                break;
+                            case 'health_log':
+                                if (!healthData) healthData = data;
+                                break;
+                            case 'shabbat':
+                                if (!shabbatData) shabbatData = data;
+                                break;
+                            case 'task':
+                            case 'business':
+                                tasks.push(data);
+                                break;
+                        }
                     } catch(e) {}
                 });
-                
-                const avgSuccess = skills.length > 0 ? (totalSuccess / skills.length) : 0;
-                
-                // Calculate ADHD metrics from activities
-                const avgFocus = activities.length > 0 
-                    ? activities.reduce((sum, a) => sum + (a.focus_quality || 5), 0) / activities.length 
-                    : 0;
-                
-                // Update UI
-                document.getElementById('total-skills').textContent = skills.length;
-                document.getElementById('success-rate').textContent = (avgSuccess * 100).toFixed(0) + '%';
-                document.getElementById('success-bar').style.width = (avgSuccess * 100) + '%';
-                document.getElementById('time-saved').textContent = (totalTimeSaved / 60).toFixed(1) + 'h';
-                document.getElementById('total-tasks').textContent = activities.length;
-                document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
-                document.getElementById('status').innerHTML = '● Connected';
-                document.getElementById('status').className = 'text-xs text-green-400 mt-1';
-                
-                // Domain counts
-                document.getElementById('business-skills').textContent = domainCount.BUSINESS;
-                document.getElementById('michael-skills').textContent = domainCount.MICHAEL;
-                document.getElementById('family-skills').textContent = domainCount.FAMILY;
-                document.getElementById('personal-skills').textContent = domainCount.PERSONAL;
-                
-                // ADHD metrics
-                document.getElementById('completion-rate').textContent = (avgSuccess * 100).toFixed(0) + '%';
-                document.getElementById('abandonment-rate').textContent = ((1 - avgSuccess) * 100).toFixed(0) + '%';
-                document.getElementById('avg-focus').textContent = avgFocus.toFixed(1) + '/10';
-                document.getElementById('streak-days').textContent = dailyMetrics.length > 0 ? dailyMetrics.length : '0';
-                
-                // Update table
-                updateTable(skillsData);
-                updateCharts(domainCount, skillsData, dailyMetrics);
-                
+
+                // Update domain counts
+                document.getElementById('ariel-tasks').textContent = domainCounts.ARIEL;
+                document.getElementById('michael-tasks').textContent = domainCounts.MICHAEL;
+                document.getElementById('family-tasks').textContent = domainCounts.FAMILY;
+                document.getElementById('business-tasks').textContent = domainCounts.BUSINESS;
+
+                // Render Travel Banner
+                if (travelData) {
+                    const banner = document.getElementById('travel-banner');
+                    banner.classList.remove('hidden');
+                    document.getElementById('travel-route').textContent = `${travelData.from?.split(',')[0] || 'Home'} → ${travelData.to || 'Destination'}`;
+                    document.getElementById('travel-distance').textContent = travelData.distance?.replace(' miles', '') || '--';
+                    document.getElementById('travel-time').textContent = travelData.drive_time || '--';
+                    document.getElementById('travel-status').textContent = travelData.status || 'active';
+                }
+
+                // Render Hotel Card
+                if (hotelData) {
+                    const card = document.getElementById('hotel-card');
+                    card.classList.remove('hidden');
+                    document.getElementById('hotel-name').textContent = hotelData.title || 'Hotel';
+                    document.getElementById('hotel-location').textContent = hotelData.location || '--';
+                    document.getElementById('hotel-checkin').textContent = hotelData.check_in || '--';
+                    document.getElementById('hotel-checkout').textContent = hotelData.check_out || '--';
+                    document.getElementById('hotel-guests').textContent = hotelData.guests?.join(', ') || '--';
+                    document.getElementById('hotel-status').textContent = hotelData.status || 'confirmed';
+                }
+
+                // Render Swim Meet Card
+                if (swimMeetData) {
+                    const card = document.getElementById('swim-meet-card');
+                    card.classList.remove('hidden');
+                    document.getElementById('swim-location').textContent = swimMeetData.location || '--';
+                    document.getElementById('swim-date').textContent = swimMeetData.date || '--';
+                    document.getElementById('swim-events').textContent = swimMeetData.events?.join(', ') || '--';
+                    document.getElementById('swim-goal').textContent = swimMeetData.goals || '--';
+                    document.getElementById('swim-status').textContent = swimMeetData.status || 'registered';
+                }
+
+                // Render Nutrition Card
+                if (nutritionData) {
+                    const card = document.getElementById('nutrition-card');
+                    card.classList.remove('hidden');
+                    document.getElementById('diet-mode').textContent = (nutritionData.diet_mode || 'standard').toUpperCase() + ' Mode';
+                    document.getElementById('hydration-goal').textContent = nutritionData.hydration_goal || '--';
+                    
+                    const mealsList = document.getElementById('meals-list');
+                    mealsList.innerHTML = (nutritionData.meals_planned || []).map(m => 
+                        `<div class="text-xs text-gray-300">• ${m}</div>`
+                    ).join('');
+                }
+
+                // Render Health Data
+                if (healthData) {
+                    document.getElementById('energy-value').textContent = healthData.energy_level + '/10';
+                    document.getElementById('energy-bar').style.width = (healthData.energy_level * 10) + '%';
+                    document.getElementById('focus-value').textContent = healthData.focus_quality + '/10';
+                    document.getElementById('focus-bar').style.width = (healthData.focus_quality * 10) + '%';
+                    document.getElementById('sleep-hours').textContent = healthData.sleep_hours + ' hrs';
+                }
+
+                // Render Shabbat Card
+                if (shabbatData) {
+                    const card = document.getElementById('shabbat-card');
+                    card.classList.remove('hidden');
+                    document.getElementById('shabbat-date').textContent = shabbatData.date || '--';
+                    document.getElementById('shabbat-candles').textContent = shabbatData.candle_lighting || '--';
+                    document.getElementById('shabbat-menu').textContent = shabbatData.menu_planned ? '✅ Yes' : '❌ No';
+                    document.getElementById('shabbat-shopping').textContent = shabbatData.shopping_done ? '✅ Yes' : '❌ No';
+                }
+
+                // Render Tasks Timeline
+                const timeline = document.getElementById('tasks-timeline');
+                const allItems = [
+                    ...(travelData ? [travelData] : []),
+                    ...(hotelData ? [hotelData] : []),
+                    ...(swimMeetData ? [swimMeetData] : []),
+                    ...tasks
+                ];
+
+                document.getElementById('task-count').textContent = allItems.length + ' items';
+
+                timeline.innerHTML = allItems.map(item => {
+                    const domain = item._domain || 'ARIEL';
+                    const type = item._activity_type || 'task';
+                    const icon = activityIcons[type] || '📋';
+                    const config = domainConfig[domain] || domainConfig.ARIEL;
+                    const status = item.status || 'pending';
+                    const statusClass = status === 'in_progress' ? 'status-active' : status === 'completed' ? 'status-completed' : 'status-pending';
+                    
+                    return `
+                        <div class="glass-light rounded-lg p-3 flex items-center gap-3 domain-${domain.toLowerCase()}">
+                            <div class="text-2xl">${icon}</div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-medium text-white truncate">${item.title || 'Untitled'}</div>
+                                <div class="text-xs text-gray-400 flex items-center gap-2">
+                                    <span class="text-${config.color}-400">${domain}</span>
+                                    ${item.category ? `<span>• ${item.category}</span>` : ''}
+                                </div>
+                            </div>
+                            <span class="${statusClass} px-2 py-0.5 rounded text-xs whitespace-nowrap">${status}</span>
+                        </div>
+                    `;
+                }).join('') || '<div class="text-gray-500 text-center py-8">No items for today</div>';
+
             } catch(e) {
                 console.error('Fetch error:', e);
-                document.getElementById('status').innerHTML = '● Error';
-                document.getElementById('status').className = 'text-xs text-red-400 mt-1';
+                document.getElementById('status-indicator').innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                    <span class="text-xs text-red-400">Error</span>
+                `;
             }
         }
 
-        function updateTable(skillsData) {
-            const domainFilter = document.getElementById('domain-filter').value;
-            const searchTerm = document.getElementById('search').value.toLowerCase();
-            
-            const filtered = skillsData.filter(s => {
-                const matchesDomain = !domainFilter || s.domain === domainFilter;
-                const matchesSearch = s.name.toLowerCase().includes(searchTerm) || s.category.toLowerCase().includes(searchTerm);
-                return matchesDomain && matchesSearch;
-            });
-            
-            const tbody = document.getElementById('skills-table');
-            tbody.innerHTML = filtered.map(s => `
-                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
-                    <td class="py-3 font-medium">${s.name}</td>
-                    <td class="py-3">
-                        <span class="px-2 py-1 rounded text-xs font-medium" style="background: ${domainColors[s.domain]}20; color: ${domainColors[s.domain]}; border: 1px solid ${domainColors[s.domain]}50">
-                            ${s.domain}
-                        </span>
-                    </td>
-                    <td class="py-3"><span class="px-2 py-1 bg-gray-700 rounded text-xs">${s.category}</span></td>
-                    <td class="py-3 font-mono">${s.uses}</td>
-                    <td class="py-3 font-mono ${s.successValue >= 80 ? 'text-green-400' : s.successValue >= 60 ? 'text-yellow-400' : 'text-red-400'}">${s.successRate}</td>
-                    <td class="py-3 font-mono text-purple-400">${s.timeSaved}</td>
-                    <td class="py-3">
-                        <span class="px-2 py-1 rounded text-xs font-medium ${
-                            s.status === 'Optimal' ? 'bg-green-900/50 text-green-300 border border-green-700' :
-                            s.status === 'Review' ? 'bg-yellow-900/50 text-yellow-300 border border-yellow-700' :
-                            'bg-red-900/50 text-red-300 border border-red-700'
-                        }">${s.status}</span>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="7" class="py-8 text-center text-gray-500">No skills found. Start tracking tasks!</td></tr>';
-        }
-
-        function updateCharts(domains, skills, metrics) {
-            // Domain chart
-            if (domainChart) domainChart.destroy();
-            domainChart = new Chart(document.getElementById('domainChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(domains),
-                    datasets: [{
-                        data: Object.values(domains),
-                        backgroundColor: Object.values(domainColors),
-                        borderWidth: 0
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { color: '#9ca3af', padding: 15 } } }
-                }
-            });
-            
-            // Activity chart
-            if (activityChart) activityChart.destroy();
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            activityChart = new Chart(document.getElementById('activityChart'), {
-                type: 'bar',
-                data: {
-                    labels: days,
-                    datasets: [{
-                        label: 'Focus Quality',
-                        data: metrics.slice(0, 7).reverse().map(m => m.avg_focus_quality || 5),
-                        backgroundColor: 'rgba(139, 92, 246, 0.7)',
-                        borderColor: '#8b5cf6',
-                        borderWidth: 1
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#9ca3af' } } },
-                    scales: { 
-                        y: { grid: { color: 'rgba(55, 65, 81, 0.5)' }, ticks: { color: '#9ca3af' }, max: 10 },
-                        x: { grid: { color: 'rgba(55, 65, 81, 0.5)' }, ticks: { color: '#9ca3af' } }
-                    }
-                }
-            });
-        }
-
-        // Event listeners
-        document.getElementById('search').addEventListener('input', fetchData);
-        document.getElementById('domain-filter').addEventListener('change', fetchData);
-
-        // Initial load and refresh
+        // Initialize
+        updateTime();
+        setInterval(updateTime, 1000);
         fetchData();
         setInterval(fetchData, 30000);
     </script>
