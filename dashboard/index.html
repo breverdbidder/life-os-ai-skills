@@ -5,23 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS - Shapira Family Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --purple: #8b5cf6; --blue: #3b82f6; --green: #10b981; --orange: #f59e0b; --red: #ef4444; }
+        :root { --purple: #8b5cf6; --blue: #3b82f6; --green: #10b981; --orange: #f59e0b; --red: #ef4444; --whatsapp: #25D366; }
         body { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f172a 100%); min-height: 100vh; font-family: system-ui, -apple-system, sans-serif; }
         .glass { background: rgba(30, 30, 50, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(139, 92, 246, 0.2); }
         .glow { box-shadow: 0 0 25px rgba(139, 92, 246, 0.3); }
         .glow-green { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
         .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-        .glow-orange { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+        .glow-whatsapp { box-shadow: 0 0 20px rgba(37, 211, 102, 0.4); }
         .status-badge { padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
         .pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
         .driving-animation { animation: drive 3s ease-in-out infinite; }
         @keyframes drive { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(10px); } }
+        .whatsapp-btn { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); transition: all 0.3s; }
+        .whatsapp-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(37, 211, 102, 0.5); }
+        .share-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; }
+        .share-modal.active { display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="text-gray-100">
+    <!-- WhatsApp Share Modal -->
+    <div id="share-modal" class="share-modal">
+        <div class="glass rounded-2xl p-6 max-w-md mx-4 glow-whatsapp">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-green-400">📱 Share via WhatsApp</h3>
+                <button onclick="closeShareModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div id="share-preview" class="bg-gray-900 rounded-lg p-4 mb-4 text-sm font-mono whitespace-pre-wrap"></div>
+            <div class="flex gap-3">
+                <button onclick="sendWhatsApp()" class="whatsapp-btn flex-1 py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Send WhatsApp
+                </button>
+                <button onclick="copyToClipboard()" class="bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-xl font-semibold">
+                    📋 Copy
+                </button>
+            </div>
+            <div id="copy-feedback" class="text-center text-green-400 text-sm mt-2 hidden">✓ Copied!</div>
+        </div>
+    </div>
+
     <div class="container mx-auto px-4 py-6 max-w-7xl">
         <!-- Header -->
         <div class="glass rounded-2xl p-5 mb-6 glow">
@@ -40,6 +64,29 @@
                     <div id="current-time" class="text-2xl font-mono text-white"></div>
                     <div id="location" class="text-xs text-gray-500 mt-1">📍 FL: EST | IL: IST</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Quick Share Buttons -->
+        <div class="glass rounded-xl p-4 mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <span>📱</span> Quick Share via WhatsApp
+                </h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button onclick="shareTrip()" class="whatsapp-btn py-3 px-4 rounded-xl font-medium text-white flex items-center justify-center gap-2">
+                    🚗 Trip Status
+                </button>
+                <button onclick="shareLocation()" class="whatsapp-btn py-3 px-4 rounded-xl font-medium text-white flex items-center justify-center gap-2">
+                    📍 Location & ETA
+                </button>
+                <button onclick="shareSwimMeet()" class="whatsapp-btn py-3 px-4 rounded-xl font-medium text-white flex items-center justify-center gap-2">
+                    🏊 Swim Meet
+                </button>
+                <button onclick="shareDayPlan()" class="whatsapp-btn py-3 px-4 rounded-xl font-medium text-white flex items-center justify-center gap-2">
+                    📋 Full Day Plan
+                </button>
             </div>
         </div>
 
@@ -67,6 +114,9 @@
                         <div class="text-xs text-gray-500">STATUS</div>
                     </div>
                 </div>
+                <button onclick="shareTrip()" class="whatsapp-btn p-3 rounded-xl" title="Share via WhatsApp">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </button>
             </div>
         </div>
 
@@ -93,7 +143,12 @@
                         <h2 class="text-lg font-semibold flex items-center gap-2">
                             <span>🏊</span> Michael's Swim Meet
                         </h2>
-                        <span class="status-badge bg-blue-900 text-blue-300" id="meet-status">TODAY</span>
+                        <div class="flex items-center gap-2">
+                            <span class="status-badge bg-blue-900 text-blue-300" id="meet-status">TODAY</span>
+                            <button onclick="shareSwimMeet()" class="whatsapp-btn p-2 rounded-lg" title="Share">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            </button>
+                        </div>
                     </div>
                     <div id="swim-meet-details" class="space-y-3">
                         <div class="text-center text-gray-500 py-4">Loading meet info...</div>
@@ -127,10 +182,10 @@
                                 <div class="text-2xl">👤</div>
                                 <div>
                                     <div class="font-medium">Ariel</div>
-                                    <div class="text-xs text-gray-400" id="ariel-status">Traveling to Ocala</div>
+                                    <div class="text-xs text-gray-400" id="ariel-status">At home</div>
                                 </div>
                             </div>
-                            <div class="text-green-400 text-sm">🚗</div>
+                            <div class="text-green-400 text-sm" id="ariel-icon">🏠</div>
                         </div>
                         <div class="flex items-center justify-between p-3 bg-blue-900/30 rounded-lg">
                             <div class="flex items-center gap-3">
@@ -157,9 +212,14 @@
 
                 <!-- Hotel Reservation -->
                 <div class="glass rounded-xl p-5 border-l-4 border-orange-400" id="hotel-card">
-                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <span>🏨</span> Hotel Tonight
-                    </h2>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                            <span>🏨</span> Hotel Tonight
+                        </h2>
+                        <button onclick="shareHotel()" class="whatsapp-btn p-2 rounded-lg" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        </button>
+                    </div>
                     <div id="hotel-details">
                         <div class="text-center text-gray-500 py-4">Loading...</div>
                     </div>
@@ -227,6 +287,16 @@
             'Content-Type': 'application/json'
         };
 
+        // Global data store
+        let lifeOSData = {
+            trip: null,
+            swimMeet: null,
+            hotel: null,
+            nutrition: null,
+            tasks: []
+        };
+        let currentShareMessage = '';
+
         // Update time display
         function updateTime() {
             const now = new Date();
@@ -237,12 +307,158 @@
         setInterval(updateTime, 1000);
         updateTime();
 
+        // WhatsApp Share Functions
+        function openShareModal(message) {
+            currentShareMessage = message;
+            document.getElementById('share-preview').textContent = message;
+            document.getElementById('share-modal').classList.add('active');
+        }
+
+        function closeShareModal() {
+            document.getElementById('share-modal').classList.remove('active');
+        }
+
+        function sendWhatsApp() {
+            const encoded = encodeURIComponent(currentShareMessage);
+            window.open(`https://wa.me/?text=${encoded}`, '_blank');
+            closeShareModal();
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(currentShareMessage);
+            document.getElementById('copy-feedback').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('copy-feedback').classList.add('hidden');
+            }, 2000);
+        }
+
+        function shareTrip() {
+            const t = lifeOSData.trip;
+            if (!t) {
+                openShareModal('🚗 No active trip');
+                return;
+            }
+            const now = new Date();
+            const message = `🚗 *TRIP UPDATE*
+━━━━━━━━━━━━━━━
+📍 *From:* ${t.origin || 'Home'}
+📍 *To:* ${t.destination || 'Destination'}
+🛣️ *Distance:* ${t.distance_miles || 0} miles
+⏱️ *Est. Time:* ${Math.floor((t.estimated_time_minutes || 0) / 60)}h ${(t.estimated_time_minutes || 0) % 60}m
+🕐 *Departure:* ${t.departure_time || 'TBD'}
+📊 *Status:* ${(t.status || 'scheduled').toUpperCase()}
+👥 *Travelers:* ${(t.travelers || []).join(', ')}
+
+_Updated: ${now.toLocaleTimeString()}_`;
+            openShareModal(message);
+        }
+
+        function shareLocation() {
+            const t = lifeOSData.trip;
+            const now = new Date();
+            let eta = 'TBD';
+            if (t && t.departure_time) {
+                // Calculate ETA based on departure + drive time
+                const depHour = parseInt(t.departure_time.split(':')[0]) || 14;
+                const driveHours = Math.floor((t.estimated_time_minutes || 150) / 60);
+                const etaHour = depHour + driveHours;
+                eta = `${etaHour > 12 ? etaHour - 12 : etaHour}:${(t.estimated_time_minutes || 0) % 60 || '00'} PM`;
+            }
+            const message = `📍 *LOCATION UPDATE*
+━━━━━━━━━━━━━━━
+👤 *Ariel & Michael Shapira*
+🚗 *Traveling to:* Ocala, FL
+🏁 *ETA:* ~${eta} EST
+📊 *Purpose:* Michael's Swim Meet
+
+🏠 *Home Base:*
+390 Roosevelt Ave
+Satellite Beach, FL 32937
+
+_Updated: ${now.toLocaleTimeString()}_`;
+            openShareModal(message);
+        }
+
+        function shareSwimMeet() {
+            const m = lifeOSData.swimMeet;
+            if (!m) {
+                openShareModal('🏊 No swim meet scheduled');
+                return;
+            }
+            const events = (m.events || []).map(e => `   • ${e.event}: ${e.seed_time || 'NT'}`).join('\n');
+            const message = `🏊 *SWIM MEET UPDATE*
+━━━━━━━━━━━━━━━
+🏆 *Meet:* ${m.meet_name || 'Swim Meet'}
+📍 *Location:* ${m.location || 'TBD'}
+🏫 *School:* ${m.school || 'Satellite Beach HS'}
+👦 *Athlete:* ${m.athlete || 'Michael Shapira'}
+
+🎯 *Events:*
+${events}
+
+⏰ *Warmup:* ${m.warmup_time || 'TBD'}
+🥗 *Diet:* ${m.diet_today || 'Standard'}
+
+_Go Michael! 💪_`;
+            openShareModal(message);
+        }
+
+        function shareHotel() {
+            const h = lifeOSData.hotel;
+            if (!h) {
+                openShareModal('🏨 No hotel reservation');
+                return;
+            }
+            const message = `🏨 *HOTEL INFO*
+━━━━━━━━━━━━━━━
+🏨 *Hotel:* ${h.hotel_name || 'TBD'}
+📍 *Location:* ${h.address || 'Ocala, FL'}
+📅 *Check-in:* ${h.check_in || 'TBD'}
+📅 *Check-out:* ${h.check_out || 'TBD'}
+👥 *Guests:* ${(h.guests || []).join(', ')}
+📋 *Confirmation:* ${h.confirmation_number || 'PENDING'}`;
+            openShareModal(message);
+        }
+
+        function shareDayPlan() {
+            const t = lifeOSData.trip;
+            const m = lifeOSData.swimMeet;
+            const h = lifeOSData.hotel;
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            
+            const tasks = lifeOSData.tasks.map(task => {
+                const icon = task.status === 'completed' ? '✅' : task.status === 'in_progress' ? '🔄' : '⏳';
+                return `${icon} ${task.title}`;
+            }).join('\n');
+
+            const message = `📅 *DAY PLAN - ${dateStr}*
+━━━━━━━━━━━━━━━
+👨‍👩‍👦 *Shapira Family*
+
+🚗 *TRAVEL*
+${t ? `From: ${t.origin || 'Home'}
+To: ${t.destination || 'Destination'}
+Departure: ${t.departure_time || 'TBD'}
+Distance: ${t.distance_miles || 0} miles` : 'No travel planned'}
+
+🏊 *SWIM MEET*
+${m ? `${m.meet_name || 'Meet'} @ ${m.location || 'TBD'}
+Events: ${(m.events || []).map(e => e.event).join(', ')}` : 'No meet scheduled'}
+
+🏨 *HOTEL*
+${h ? `${h.hotel_name || 'TBD'} - ${h.address || 'Ocala'}
+Check-in: ${h.check_in || 'TBD'}` : 'No hotel booked'}
+
+📋 *TASKS*
+${tasks || 'No tasks'}
+
+_Sent from Life OS_`;
+            openShareModal(message);
+        }
+
         async function fetchData() {
             try {
-                // Get today's date
-                const today = new Date().toISOString().split('T')[0];
-                
-                // Fetch all activities for today
                 const res = await fetch(
                     `${SUPABASE_URL}/rest/v1/activities?platform=eq.life_os&order=start_time.desc`,
                     { headers }
@@ -270,21 +486,26 @@
                             const trip = { ...a, ...data };
                             trips.push(trip);
                             totalMiles += data.distance_miles || 0;
-                            if (data.status === 'in_progress') activeTrip = trip;
+                            activeTrip = trip;
+                            lifeOSData.trip = trip;
                         }
                         else if (a.activity_type === 'TASK') {
-                            tasks.push({ ...a, ...data });
+                            const task = { ...a, ...data };
+                            tasks.push(task);
                             taskCount++;
                         }
                         else if (a.activity_type === 'SWIM_MEET') {
                             swimMeet = { ...a, ...data };
+                            lifeOSData.swimMeet = swimMeet;
                             eventCount++;
                         }
                         else if (a.activity_type === 'HOTEL') {
                             hotel = { ...a, ...data };
+                            lifeOSData.hotel = hotel;
                         }
                         else if (a.activity_type === 'NUTRITION') {
                             nutrition = { ...a, ...data };
+                            lifeOSData.nutrition = nutrition;
                         }
                         
                         if (a.focus_quality) {
@@ -294,6 +515,8 @@
                     } catch(e) {}
                 });
                 
+                lifeOSData.tasks = tasks;
+                
                 // Update stats
                 document.getElementById('stat-tasks').textContent = taskCount;
                 document.getElementById('stat-miles').textContent = totalMiles;
@@ -301,6 +524,20 @@
                 document.getElementById('stat-focus').textContent = focusCount > 0 ? Math.round(focusSum / focusCount) : '--';
                 document.getElementById('task-count').textContent = `${taskCount} tasks`;
                 document.getElementById('total-miles').textContent = `${totalMiles} miles today`;
+                
+                // Update family status based on trip
+                if (activeTrip) {
+                    const status = activeTrip.status || 'scheduled';
+                    if (status === 'in_progress') {
+                        document.getElementById('ariel-status').textContent = 'Traveling to Ocala';
+                        document.getElementById('ariel-icon').textContent = '🚗';
+                        document.getElementById('michael-status').textContent = 'Traveling to Ocala';
+                    } else if (status === 'scheduled') {
+                        document.getElementById('ariel-status').textContent = `Leaving at ${activeTrip.departure_time || 'TBD'}`;
+                        document.getElementById('ariel-icon').textContent = '🏠';
+                        document.getElementById('michael-status').textContent = `Leaving at ${activeTrip.departure_time || 'TBD'}`;
+                    }
+                }
                 
                 // Render active trip banner
                 if (activeTrip) {
@@ -311,7 +548,7 @@
                     const hours = Math.floor((activeTrip.estimated_time_minutes || 0) / 60);
                     const mins = (activeTrip.estimated_time_minutes || 0) % 60;
                     document.getElementById('trip-time').textContent = `${hours}h ${mins}m`;
-                    document.getElementById('trip-status').textContent = 'IN PROGRESS';
+                    document.getElementById('trip-status').textContent = (activeTrip.status || 'SCHEDULED').toUpperCase();
                 }
                 
                 // Render tasks
@@ -319,12 +556,14 @@
                     const statusColors = {
                         'completed': 'bg-green-900/50 text-green-300',
                         'in_progress': 'bg-blue-900/50 text-blue-300',
-                        'pending': 'bg-gray-700 text-gray-300'
+                        'pending': 'bg-gray-700 text-gray-300',
+                        'scheduled': 'bg-purple-900/50 text-purple-300'
                     };
                     const statusIcons = {
                         'completed': '✅',
                         'in_progress': '🔄',
-                        'pending': '⏳'
+                        'pending': '⏳',
+                        'scheduled': '📅'
                     };
                     return `
                         <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
@@ -387,7 +626,7 @@
                     document.getElementById('nutrition-details').innerHTML = `
                         <div class="space-y-2">
                             <div class="flex items-center justify-between">
-                                <span class="text-green-400 font-medium">${nutrition.diet_phase?.toUpperCase() || 'STANDARD'}</span>
+                                <span class="text-green-400 font-medium">${(nutrition.diet_phase || 'standard').toUpperCase()}</span>
                                 <span class="text-xs text-gray-500">${nutrition.meal_type || ''}</span>
                             </div>
                             <div class="text-sm text-gray-400">${(nutrition.foods || []).join(', ')}</div>
@@ -414,10 +653,10 @@
                 const drivingHtml = trips.length > 0 ? trips.map(t => `
                     <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
                         <div class="flex items-center gap-3">
-                            <span class="text-xl">${t.status === 'in_progress' ? '🚗' : '✅'}</span>
+                            <span class="text-xl">${t.status === 'in_progress' ? '🚗' : t.status === 'scheduled' ? '📅' : '✅'}</span>
                             <div>
                                 <div class="font-medium">${t.title || 'Trip'}</div>
-                                <div class="text-xs text-gray-500">${t.origin || ''} → ${t.destination || ''}</div>
+                                <div class="text-xs text-gray-500">${t.departure_time ? `Departure: ${t.departure_time}` : ''}</div>
                             </div>
                         </div>
                         <div class="text-right">
@@ -432,6 +671,14 @@
                 console.error('Fetch error:', e);
             }
         }
+
+        // Close modal on escape or click outside
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeShareModal();
+        });
+        document.getElementById('share-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'share-modal') closeShareModal();
+        });
 
         fetchData();
         setInterval(fetchData, 30000);
